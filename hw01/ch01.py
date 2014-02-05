@@ -45,16 +45,20 @@ class Buffer:
         return self.queued
 
 class Controller:
-    def __init__( self, kp, ki ):
+    def __init__( self, kp, ki, kd ):
         """Initializes the controller.
 
         kp: proportional gain
         ki: integral gain
+        kd: derivative gain
         """
-        self.kp, self.ki = kp, ki
+        self.kp, self.ki, self.kd = kp, ki, kd
         self.i = 0       # Cumulative error ("integral")
+        self.d = 0
+        self.last_t = 0
+        self.last_e = 0
 
-    def work( self, e ):
+    def work( self, e ,t):
         """Computes the number of jobs to be added to the ready queue.
 
         e: error
@@ -62,8 +66,12 @@ class Controller:
         returns: float number of jobs
         """
         self.i += e
+        #derivative term is (current error - prev error) / (current time - previous time)
+        self.d = (e - self.last_e) / (t - self.last_t)
+        self.last_e = e
+        self.last_t = t
 
-        return self.kp*e + self.ki*self.i
+        return self.kp*e + self.ki*self.i + self.kd*self.d
 
 # ============================================================
 
@@ -77,16 +85,21 @@ def closed_loop( c, p, tm=5000 ):
     returns: tuple of sequences (times, targets, errors)
     """
     def setpoint( t ):
-        if t < 100: return 0
-        if t < 300: return 50
-        return 10
+        """
+        with a gradually increasing setpoint, the system displays a higher value of RMS
+        the system also consistently undershoots the setpoint curve
+        """
+        return 0.004*(t**1.7)
+        # if t < 100: return 0
+        # if t < 300: return 50
+        # return 10
     
     y = 0
     res = []
-    for t in range( tm ):
+    for t in range(1, tm ):
         r = setpoint(t)
         e = r - y
-        u = c.work(e)
+        u = c.work(e,t)
         y = p.work(u)
 
         #print t, r, e, u, y
@@ -95,14 +108,24 @@ def closed_loop( c, p, tm=5000 ):
     return zip(*res)
 
 # ============================================================
+"""
+Setting ki to 0 increases RMS error by about 0.5
+Also, educing the integral term decreases feedback delay
+It also dampens the effect of output peaks.
+"""
 
-c = Controller( 1.25, 0.01 )
+"""
+My Controller with a derivative gain of 0.9 is about 25% better
+"""
+c = Controller( 1.0, 0.0005, 0.9 )
+# c = Controller( 1.0, 0.0005, 0 )
 p = Buffer( 50, 10 )
 
 # run the simulation
 ts, rs, es, us, ys = closed_loop( c, p, 1000 )
 
-print 'RMS error', numpy.sqrt(numpy.mean(numpy.array(es)**2))
+rms = numpy.sqrt(numpy.mean(numpy.array(es)**2))
+print "RMS = %s" % rms
 
 # generate the smoothed curve using a rolling mean
 # (I think the curves in the book use loess)
