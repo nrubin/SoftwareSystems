@@ -23,7 +23,25 @@ char *tracks[] = {
 char *strjoin(char *array[], int n)
 {
     // TODO: fill this in
-    return NULL;
+    // first get the size of the array
+    // then strcat the whole way down!
+    int i = 0;
+    int size = 0;
+    int offset = 0;
+    char *prev_buff = malloc(1);
+    strcpy(prev_buff,"");
+    // printf("The array is this long: %i\n", num_strs );
+    for (i = 1; i < n; i++)
+    {
+        size = size + strlen(array[i]);
+    }
+    char *result = malloc(size + 1);
+    for (i = 0; i < n; i++)
+    {
+        strcpy(result + offset,tracks[i]);
+        offset += strlen(tracks[i]) * sizeof(char);
+    }
+    return result;
 }
 
 
