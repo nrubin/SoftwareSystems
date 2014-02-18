@@ -110,6 +110,7 @@ def closed_loop( c, p, tm=5000 ):
 # ============================================================
 """
 Setting ki to 0 increases RMS error by about 0.5
+
 Also, educing the integral term decreases feedback delay
 It also dampens the effect of output peaks.
 """

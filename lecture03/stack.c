@@ -10,26 +10,31 @@ License: GNU GPLv3
 
 #define SIZE 5
 
-int *foo() {
+
+int *foo()
+{
     int i;
     int array[SIZE];
 
     printf("%p\n", array);
 
-    for (i=0; i<SIZE; i++) {
-	array[i] = 17;
+    for (i = 0; i < SIZE; i++)
+    {
+        array[i] = 17;
     }
     return array;
 }
 
-void bar() {
+void bar()
+{
     int i;
     int array[SIZE];
 
     printf("%p\n", array);
 
-    for (i=0; i<SIZE; i++) {
-	array[i] = i;
+    for (i = 0; i < SIZE; i++)
+    {
+        array[i] = i;
     }
 }
 
@@ -39,8 +44,9 @@ int main()
     int *array = foo();
     bar();
 
-    for (i=0; i<SIZE; i++) {
-	printf("%d\n", array[i]);
+    for (i = 0; i < SIZE; i++)
+    {
+        printf("%d\n", array[i]);
     }
 
     return 0;

@@ -7,14 +7,13 @@ Noam Rubin
 #include <stdlib.h>
 
 /*
-Prompts the user for a card name, truncated to two characters. returns the card name.
+Modifer function (for the sake of scope)
+Takes a pointer to a three-character array and populates the array with values from STDIN
 */
-char card_name_reader(void)
+void card_name_reader(char *card_name)
 {
-    char card_name[3];
     puts("Enter the card name: ");
     scanf("%2s", card_name);
-    return *card_name;
 }
 /*
 Takes a card name and returns the card value as an int
@@ -72,16 +71,16 @@ void loop(void)
     int val = 0;
     int count = 0;
     int STOP = 0;
-    char card_name;
+    char card_name[3];
     while (!STOP)
     {
-        card_name = card_name_reader();
-        if (card_name == 'X')
+        card_name_reader(card_name);
+        if (card_name[0] == 'X')
         {
             printf("Game Over! The final count is: %i\n", count);
             break;
         }
-        val = get_card_val(&card_name);
+        val = get_card_val(card_name);
         if (val != 0)
         {
             update_card_count(val, &count);
