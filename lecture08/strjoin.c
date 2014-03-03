@@ -35,7 +35,8 @@ char *strjoin(char *array[], int n)
     {
         size = size + strlen(array[i]);
     }
-    char *result = malloc(size + 1);
+    char *result = (char *) malloc(size + 1);
+    result[0] = '\0';
     for (i = 0; i < n; i++)
     {
         strcpy(result + offset,tracks[i]);
@@ -43,7 +44,6 @@ char *strjoin(char *array[], int n)
     }
     return result;
 }
-
 
 int main (int argc, char *argv[])
 {

@@ -13,8 +13,11 @@ LIB = mongo-c-driver/src
 # the MongoDB C driver into a library file (.a or .so), and then
 # link tutorial.o with the library.  But for now we'll keep it simple.
 
-tutorial: tutorial.c
-	gcc --std=gnu99 -I$(LIB) $(LIB)/*.c tutorial.c -o tutorial
+# tutorial: tutorial.c
+# 	gcc --std=gnu99 -I$(LIB) $(LIB)/*.c tutorial.c -o tutorial
 
 test_rand: test_rand.c
-	gcc -O3 test_rand.c -o test_rand
+	gcc test_rand.c -o test_rand
+
+rand: rand.c
+	gcc rand.c -o rand
