@@ -46,8 +46,8 @@ main (int argc, char *argv[])
   int i;
   float f;
   double t0, t1,d;
-  int iters = 1000000000;
-  // int iters = 10;
+  // int iters = 1000000000;
+  int iters = 100000000;
   int seed = 17;
 
   srandom (seed);
@@ -110,6 +110,22 @@ main (int argc, char *argv[])
   }
   t1 = get_seconds();
   printf ("double \t%g ms\n", t1 - t0);
+
+  srandom (seed);
+  t0 = get_seconds();
+  for (i=0; i<iters; i++) {
+    d = my_random_double2();
+  } 
+  t1 = get_seconds();
+  printf ("double2 \t%g ms\n", t1 - t0);
+
+  srandom (seed);
+  t0 = get_seconds();
+  for (i=0; i<iters; i++) {
+    d = random_double();
+  } 
+  t1 = get_seconds();
+  printf ("their double \t%g ms\n", t1 - t0);
 
   srandom (seed);
   t0 = get_seconds();
