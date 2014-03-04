@@ -99,13 +99,14 @@ uint64_t random_long()
     uint64_t random_long = 0;
     random_long = random();
     random_long = (random_long << 32) | random();
+    return random_long;
 }
 
 // compute a random double using my algorithm
 double my_random_double()
 {
     uint64_t x, mant, exp;
-    exp = 1023;
+    exp = 1022;
     int mask = 1;
 
     union
@@ -163,7 +164,7 @@ double my_random_double2()
          :"=r"(exp)
          :"r"(x)
         );
-    exp = 1023 - exp;
+    exp = 1022 - exp;
 
     // use the other 23 bits for the mantissa (for small numbers
     // this means we are re-using some bits)
@@ -219,9 +220,10 @@ float random_double()
 
 // int main(int argc, char const *argv[])
 // {
+//     srandom(16);
 //     double l = random_long();
 //     double n = my_random_double();
-//     printf("%g\n", n);
-//     printf("%g\n", l);
+//     printf("%lf\n", n);
+//     printf("%lf\n", l);
 //     return 0;
 // }
