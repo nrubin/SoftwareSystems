@@ -21,3 +21,6 @@ test_rand: test_rand.c
 
 rand: rand.c
 	gcc rand.c -o rand
+
+test_distrib: test_distrib.c
+	gcc test_distrib.c -o test_distrib

@@ -14,17 +14,19 @@ License: Creative Commons Attribution-ShareAlike 3.0
 
 /* Here's one way of making a polymorphic object in C */
 
-typedef struct {
+typedef struct
+{
     enum Type {INT, STRING} type;
-    union {
-	int i;
-	char *s;
+    union
+    {
+        int i;
+        char *s;
     };
 } Value;
 
 
 /* Makes a Value object that contains an int. */
-Value *make_int_value(int i) 
+Value *make_int_value(int i)
 {
     Value *value = (Value *) malloc (sizeof (Value));
     value->type = INT;
@@ -34,7 +36,7 @@ Value *make_int_value(int i)
 
 
 /* Makes a Value object that contains a string. */
-Value *make_string_value(char *s) 
+Value *make_string_value(char *s)
 {
     Value *value = (Value *) malloc (sizeof (Value));
     value->type = STRING;
@@ -44,19 +46,21 @@ Value *make_string_value(char *s)
 
 
 /* Prints a value object. */
-void print_value (Value *value) 
+void print_value (Value *value)
 {
-    if (value == NULL) {
+    if (value == NULL)
+    {
         printf ("%p", value);
-	return;
+        return;
     }
-    switch (value->type) {
+    switch (value->type)
+    {
     case INT:
-	printf ("%d", value->i);
-	break;
+        printf ("%d", value->i);
+        break;
     case STRING:
-	printf ("%s", value->s);
-	break;
+        printf ("%s", value->s);
+        break;
     }
 }
 
@@ -72,7 +76,8 @@ equal is a pointer to a function that knows how to compare keys.
 
  */
 
-typedef struct {
+typedef struct
+{
     void *key;
     int (*hash) (void *);
     int (*equal) (void *, void *);
@@ -80,10 +85,7 @@ typedef struct {
 
 
 /* Makes a Hashable object. */
-Hashable *make_hashable(void *key, 
-			int (*hash) (void *),
-			int (*equal) (void *, void *)
-			)
+Hashable *make_hashable(void *key, int (*hash) (void *), int (*equal) (void *, void *) )
 {
     Hashable *hashable = (Hashable *) malloc (sizeof (Hashable));
     hashable->key = key;
@@ -102,22 +104,26 @@ void print_hashable(Hashable *hashable)
 
 
 /* Hashes an integer. */
+//returns the the integer?
 int hash_int(void *p)
 {
-    return *(int *)p;
+    return *(int *) p;
 }
 
 
-/* Hashes a string. */
+/* Hashes a string.
+...by summing the character value of all the chars in the string
+*/
 int hash_string(void *p)
 {
-    char *s = (char *) p;
+    char *s = (char *) p; //cast a void to char
     int total = 0;
     int i = 0;
 
-    while (s[i] != 0) {
-	total += s[i];
-	i++;
+    while (s[i] != 0)
+    {
+        total += s[i];
+        i++;
     }
     return total;
 }
@@ -126,14 +132,17 @@ int hash_string(void *p)
 /* Hashes any Hashable. */
 int hash_hashable(Hashable *hashable)
 {
-    return hashable->hash (hashable->key);
+    return hashable->hash(hashable->key);
 }
 
 
 /* Compares integers. */
 int equal_int (void *ip, void *jp)
 {
-    // FIX ME!
+    if ( *(int *) ip == *(int *) jp )
+    {
+        return 1;
+    }
     return 0;
 }
 
@@ -141,20 +150,32 @@ int equal_int (void *ip, void *jp)
 /* Compares strings. */
 int equal_string (void *s1, void *s2)
 {
-    // FIX ME!
-    return 0;
+    char *string1 = (char *) s1;
+    char *string2 = (char *) s2;
+    int eq = strcmp(string1, string2);
+    if (eq == 0)
+    {
+        return 1;
+    }
+    else
+    {
+        return 0;
+    }
 }
 
 
 /* Compares Hashables. */
 int equal_hashable(Hashable *h1, Hashable *h2)
 {
-    // FIX ME!
+    if ( h1->equal(h1->key, h2->key) && h2->equal(h1->key, h2->key) )
+    {
+        return 1;
+    }
     return 0;
 }
 
 
-/* Makes a Hashable int. 
+/* Makes a Hashable int.
 
 Allocates space and copies the int.
 */
@@ -166,7 +187,7 @@ Hashable *make_hashable_int (int x)
 }
 
 
-/* Makes a Hashable string. 
+/* Makes a Hashable string.
 
 Stores a reference to the string (not a copy).
 */
@@ -179,7 +200,8 @@ Hashable *make_hashable_string (char *s)
 
 // NODE: a node in a list of key-value pairs
 
-typedef struct node {
+typedef struct node
+{
     Hashable *key;
     Value *value;
     struct node *next;
@@ -189,8 +211,11 @@ typedef struct node {
 /* Makes a Node. */
 Node *make_node(Hashable *key, Value *value, Node *next)
 {
-    // FIX ME!
-    return NULL;
+    Node *node = malloc(sizeof(Node));
+    node->key = key;
+    node->value = value;
+    node->next = next;
+    return node;
 }
 
 
@@ -206,7 +231,11 @@ void print_node(Node *node)
 /* Prints all the Nodes in a list. */
 void print_list(Node *node)
 {
-    // FIX ME!
+    print_node(node);
+    if (node->next != NULL)
+    {
+        print_list(node->next);
+    }
 }
 
 
@@ -223,14 +252,23 @@ Node *prepend(Hashable *key, Value *value, Node *rest)
 /* Looks up a key and returns the corresponding value, or NULL */
 Value *list_lookup(Node *list, Hashable *key)
 {
-    // FIX ME!
+    Node *current_node = list;
+    while ( current_node != NULL )
+    {
+        if ( equal_hashable(current_node->key, key) )
+        {
+            return current_node->value;
+        }
+        current_node = current_node->next;
+    }
     return NULL;
 }
 
 
 // MAP: a map is a list of key-value pairs
 
-typedef struct map {
+typedef struct map
+{
     int n;
     Node **lists;
 } Map;
@@ -239,8 +277,11 @@ typedef struct map {
 /* Makes a Map with n lists. */
 Map *make_map(int n)
 {
-    // FIX ME!
-    return NULL;
+    Map *map = malloc(sizeof(Map));
+    Node **lists = malloc(sizeof(Node) * n); //made need to be sizeof (Node *)
+    map->lists = lists;
+    map->n = n;
+    return map;
 }
 
 
@@ -248,12 +289,13 @@ Map *make_map(int n)
 void print_map(Map *map)
 {
     int i;
-
-    for (i=0; i<map->n; i++) {
-	if (map->lists[i] != NULL) {
-	    printf ("%d\n", i);
-	    print_list (map->lists[i]);
-	}
+    for (i = 0; i < map->n; i++)
+    {
+        if (map->lists[i] != NULL)
+        {
+            printf ("%d\n", i);
+            print_list (map->lists[i]);
+        }
     }
 }
 
@@ -261,15 +303,34 @@ void print_map(Map *map)
 /* Adds a key-value pair to a map. */
 void map_add(Map *map, Hashable *key, Value *value)
 {
-    // FIX ME!
+    int node_index = hash_hashable(key) % map->n ;
+    Node *node = map->lists[node_index];
+    if (node == NULL)
+    {
+        Node *new_node = make_node( key , value , NULL);
+        map->lists[node_index] = new_node;
+    }
+    else
+    {
+        Node *new_node = prepend(key, value, node);
+        map->lists[node_index] = new_node;
+    }
 }
 
 
 /* Looks up a key and returns the corresponding value, or NULL. */
 Value *map_lookup(Map *map, Hashable *key)
 {
-    // FIX ME!
-    return NULL;
+    int node_index = hash_hashable(key) % map->n;
+    Node *node = map->lists[node_index];
+    if (node == NULL)
+    {
+        return NULL;
+    }
+    else
+    {
+        return list_lookup(node, key);
+    }
 }
 
 
@@ -291,7 +352,7 @@ int main ()
     // make a list by hand
     Value *value1 = make_int_value (17);
     Node *node1 = make_node(hashable1, value1, NULL);
-    print_node (node1);
+    // print_node (node1);
 
     Value *value2 = make_string_value ("Downey");
     Node *list = prepend(hashable2, value2, node1);
@@ -309,7 +370,9 @@ int main ()
 
     // make a map
     Map *map = make_map(10);
+    printf("adding hashable 1\n");
     map_add(map, hashable1, value1);
+    printf("adding hashable 2\n");
     map_add(map, hashable2, value2);
 
     printf ("Map\n");

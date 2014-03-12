@@ -31,26 +31,34 @@ char *convert_time(time_t t) {
 
 // Interval definition
 typedef struct {
-    time_t start;
+    time_t start;   
     time_t end;
 } Interval;
 
 // Returns a new Interval with the given start and end times.
 // If unable to allocate, prints an error message and exits.
 Interval *make_interval(time_t start, time_t end) {
-    // fill this in
-    return NULL;
+    Interval* ret = malloc(sizeof(Interval));
+    if (ret == NULL)
+    {
+        (void) fprintf(stderr, "Failed to malloc the Interval");
+        exit(EXIT_FAILURE);
+    }
+    ret->start = start;
+    ret->end = end;
+    return ret;
 }
 
 // Computes the duration of an Interval using difftime.
 double interval_duration(Interval *interval) {
-    // fill this in
-    return 0.0;
+    double ret;
+    ret = difftime(interval->end,interval->start);
+    return ret;
 }
 
 // Frees an Interval.
 void free_interval(Interval *interval) {
-    // fill this in
+    free(interval);
 }
 
 // Prints an interval in local time.
