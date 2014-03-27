@@ -12,32 +12,38 @@ License: Creative Commons Attribution-ShareAlike 3.0
 #include <stdlib.h>
 #include <assert.h>
 
-typedef struct node {
+typedef struct node
+{
     int val;
-    struct node * next;
+    struct node *next;
 } Node;
 
-Node *make_node(int val, Node *next) {
+Node *make_node(int val, Node *next)
+{
     Node *node = malloc(sizeof(Node));
     node->val = val;
     node->next = next;
     return node;
 }
 
-void print_list(Node *head) {
+void print_list(Node *head)
+{
     Node *current = head;
 
-    while (current != NULL) {
+    while (current != NULL)
+    {
         printf("%d\n", current->val);
         current = current->next;
     }
 }
 
-int pop(Node **head) {
+int pop(Node **head)
+{
     int retval;
     Node *next_node;
 
-    if (*head == NULL) {
+    if (*head == NULL)
+    {
         return -1;
     }
 
@@ -50,54 +56,63 @@ int pop(Node **head) {
 }
 
 // Add a new element to the beginning of the list.
-void push(Node **head, int val) {
+void push(Node **head, int val)
+{
     Node *new_node = make_node(val, *head);
     *head = new_node;
 }
 
 // Remove the first element with the given value; return the number
 // of nodes removed.
-int remove_by_value(Node **head, int val) {
+int remove_by_value(Node **head, int val)
+{
     Node *node = *head;
     Node *victim;
 
-    if (node == NULL) {
-	return 0;
+    if (node == NULL)
+    {
+        return 0;
     }
 
-    if (node->val == val) {
-	pop(head);
-	return 1;
+    if (node->val == val)
+    {
+        pop(head);
+        return 1;
     }
 
-    for(; node->next != NULL; node = node->next) {
-	if (node->next->val == val) {
-	    victim = node->next;
-	    node->next = victim->next;
-	    free(victim);
-	    return 1;
-	}
+    for (; node->next != NULL; node = node->next)
+    {
+        if (node->next->val == val)
+        {
+            victim = node->next;
+            node->next = victim->next;
+            free(victim);
+            return 1;
+        }
     }
     return 0;
 }
 
 // Reverse the elements of the list without allocating new nodes.
-void reverse(Node **head) {
+void reverse(Node **head)
+{
     Node *node = *head;
     Node *next, *temp;
 
-    if (node == NULL || node->next == NULL) {
-	return;
+    if (node == NULL || node->next == NULL)
+    {
+        return;
     }
 
     next = node->next;
     node->next = NULL;
 
-    while (next != NULL) {
-	temp = next->next;
-	next->next = node;
-	node = next;
-	next = temp;
+    while (next != NULL)
+    {
+        temp = next->next;
+        next->next = node;
+        node = next;
+        next = temp;
     }
     *head = node;
 }
@@ -106,13 +121,53 @@ void reverse(Node **head) {
 // Index 0 adds an element to the beginning.  Index 1 adds an
 // element between the first and second elements.
 // Returns 0 if successful, -1 if the index is out of range.
-int insert_by_index(Node **head, int val, int index) {
-    // FILL THIS IN
-    return -1;
+int insert_by_index(Node **head, int val, int index)
+{
+    int i = 0;
+    Node *node = *head;
+    Node *previous_node = *head;
+    /*
+    Easy case: if we're adding a new head, just push the new node
+    */
+    if (index == 0)
+    {
+        push(head, val);
+        return 0;
+    }
+    else
+    {
+        /*
+        Alright, we're adding something within the list.
+        Let's iterate through to find the right pair of nodes
+        to insert the list into.
+        */
+        for (; node->next != NULL; node = node->next)
+        {
+            i++;
+            if (i == index)
+            {
+                Node *new_node = make_node(val, node);
+                previous_node->next = new_node;
+                return 0;
+            }
+            previous_node = node;
+        }
+        /*
+        This case covers the situation where we're adding a new tail.
+        */
+        if (index == i + 1)
+        {
+            Node *new_node = make_node(val, NULL);
+            node->next = new_node;
+            return 0;
+        }
+        return -1;
+    }
 }
 
 // Makes a mysterious data structure.
-Node *make_something() {
+Node *make_something()
+{
     Node *node1 = make_node(1, NULL);
     Node *node2 = make_node(2, NULL);
     Node *node3 = make_node(3, NULL);
@@ -124,7 +179,8 @@ Node *make_something() {
     return node3;
 }
 
-int main() {
+int main()
+{
     // make a list of even numbers
     Node *test_list = make_node(2, NULL);
     test_list->next = make_node(4, NULL);
